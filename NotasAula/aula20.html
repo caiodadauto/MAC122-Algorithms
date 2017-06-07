@@ -1,0 +1,187 @@
+
+<!-- saved from url=(0075)http://www.vision.ime.usp.br/~pmiranda/mac122_2s14/aulas/aula20/aula20.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link href="./aula20_files/shCore.css" rel="stylesheet" type="text/css">
+  <link href="./aula20_files/shThemeDefault.css" rel="stylesheet" type="text/css">
+<style type="text/css"></style></head>
+
+<body>
+
+  <h2>Problema das 8 Rainhas:</h2>
+
+  É possível colocar 8 rainhas do jogo de xadrez sobre o 
+  tabuleiro de modo que nenhuma das rainhas possa atacar outra?
+  O programa abaixo encontra todas as 92 soluções do problema
+  por busca exaustiva (força bruta). Uma das soluções 
+  é mostrada abaixo:
+<p>
+</p><center>
+<table border="1" cellspacing="0">
+<tbody><tr><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB">&#9819;</td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td></tr>
+<tr><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB">&#9819;</td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td></tr>
+<tr><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555">&#9819;</td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td></tr>
+<tr><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB">&#9819;</td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td></tr>
+<tr><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555">&#9819;</td></tr>
+<tr><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555">&#9819;</td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td></tr>
+<tr><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB">&#9819;</td><td bgcolor="#555555"> </td></tr>
+<tr><td bgcolor="#555555">&#9819;</td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td></tr>
+</tbody></table>
+</center>
+
+<p>
+Com base nas informações do problema, vamos tentar reduzir
+o máximo possível o espaço de busca de modo a tornar a
+solução por força bruta viável.
+Abaixo discutimos algumas opções:
+</p><ol>
+  <li>
+      Testar todas possíveis posições das rainhas:
+      Um tabuleiro 8x8 tem 64 posições. 
+      Para a primeira rainha temos 64 possibilidades,
+      para a segunda 63, para a terceira 62, ...
+      Logo temos 64*63*62*61*60*59*58*57/8! = C<sub>64,8</sub>,
+      ou seja, o número de combinações 
+      de 64 elementos tomados 8 a 8.
+      C<sub>64,8</sub> = 64!/(8!*(64-8)!) = 64!/(8!*56!) &#8773; 1.784 * 10<sup>14</sup>.
+      Espaço de busca grande demais!
+  </li>
+  <li>
+  Vamos reduzir o espaço de busca sabendo que as rainhas
+  ocupam diferentes colunas (numeradas de zero a sete).
+  <ul>
+  <li> A rainha <b>R1</b> tem 8 possibilidades de linhas na coluna 0,</li>
+  <li> A rainha <b>R2</b> tem 8 possibilidades de linhas na coluna 1,</li>
+  <li> ...</li>
+  <li> A rainha <b>R8</b> tem 8 possibilidades de linhas na coluna 7.</li>
+  </ul>
+  No total temos 8<sup>8</sup> = 16777216.
+  </li>
+  <li>
+  Vamos reduzir o espaço de busca ainda mais sabendo que
+  as rainhas não podem ocupar a mesma linha.
+  <ul>
+  <li> A rainha <b>R1</b> tem 8 possibilidades de linhas na coluna 0,</li>
+  <li> A rainha <b>R2</b> tem 7 possibilidades de linhas na coluna 1,</li>
+  <li> A rainha <b>R3</b> tem 6 possibilidades de linhas na coluna 2,</li>
+  <li> ...</li>
+  </ul>
+  No total temos 8! = 40320, ou seja, o número de permutações de 8 elementos.
+  Esse espaço de busca pode ser rapidamente testado por um programa 
+  de computador.
+  </li>
+</ol>
+
+<h3>Resolução:</h3>
+
+Adotamos o espaço de busca da terceira opção,
+tendo como base o código que gera as permutações 
+dos elementos de um vetor. Cada permutação 
+corresponde a uma solução candidata
+que deve ser verificada pelo programa.
+Como, por construção, 
+os elementos do espaço de busca da terceira opção
+já satisfazem as restrições
+em linhas e colunas, só falta verificar as
+restrições nas diagonais.
+<p>
+Considere uma matriz do tabuleiro 8x8, com índices de zero a sete
+nas linhas e colunas.
+Cada possível configuração das rainhas
+no tabuleiro, dentro do espaço de busca considerado,
+é representada por um vetor <code>int linhas[8];</code>,
+onde a i-ésima rainha <b>Ri</b> ocupa a posição 
+<code>(x,y)=(i-1, linhas[i-1])</code> do tabuleiro.
+</p><ul>
+<li>A rainha <b>R1</b> ocupa a posição <code>(0, linhas[0])</code>.</li>
+<li>A rainha <b>R2</b> ocupa a posição <code>(1, linhas[1])</code>.</li>
+<li>...</li>
+<li>A rainha <b>R8</b> ocupa a posição <code>(7, linhas[7])</code>.</li>
+</ul>
+Por exemplo, o vetor <code>int linhas[8] = {0, 1, 2, 3, 4, 5, 6, 7};</code> corresponde a seguinte configuração:
+
+<p>
+</p><center>
+<table border="1" cellspacing="0">
+<tbody><tr><td bgcolor="#BBBBBB">&#9819;</td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td></tr>
+<tr><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB">&#9819;</td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td></tr>
+<tr><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB">&#9819;</td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td></tr>
+<tr><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB">&#9819;</td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td></tr>
+<tr><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB">&#9819;</td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td></tr>
+<tr><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB">&#9819;</td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td></tr>
+<tr><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB">&#9819;</td><td bgcolor="#555555"> </td></tr>
+<tr><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB"> </td><td bgcolor="#555555"> </td><td bgcolor="#BBBBBB">&#9819;</td></tr>
+</tbody></table>
+</center>
+
+
+O programa abaixo testa todas as 8! permutações dos elementos do vetor <code>linhas</code> e
+imprime todas as soluções do problema.
+
+
+<h3>Funções auxiliares:</h3>
+
+Para gerar as permutações
+do vetor, precisamos de uma função auxiliar que
+troca/inverte dois elementos de um vetor:
+
+  <div><div id="highlighter_964047" class="syntaxhighlighter  c"><div class="toolbar"><span><a href="http://www.vision.ime.usp.br/~pmiranda/mac122_2s14/aulas/aula20/aula20.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="c keyword bold">void</code> <code class="c plain">Troca(</code><code class="c color1 bold">int</code> <code class="c plain">v[], </code><code class="c color1 bold">int</code> <code class="c plain">i, </code><code class="c color1 bold">int</code> <code class="c plain">j) {</code></div><div class="line number2 index1 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">int</code> <code class="c plain">tmp;</code></div><div class="line number3 index2 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">tmp = v[i]; </code></div><div class="line number4 index3 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">v[i] = v[j]; </code></div><div class="line number5 index4 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">v[j] = tmp;</code></div><div class="line number6 index5 alt1"><code class="c plain">}</code></div></div></td></tr></tbody></table></div></div>
+
+
+Também precisamos de uma função
+que verifica se uma dada permutação do vetor
+<code>linhas</code> corresponde a uma solução do problema.
+Para isso, precisamos verificar as diagonais.
+
+  <div><div id="highlighter_57331" class="syntaxhighlighter  c"><div class="toolbar"><span><a href="http://www.vision.ime.usp.br/~pmiranda/mac122_2s14/aulas/aula20/aula20.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div><div class="line number15 index14 alt2">15</div><div class="line number16 index15 alt1">16</div><div class="line number17 index16 alt2">17</div><div class="line number18 index17 alt1">18</div><div class="line number19 index18 alt2">19</div><div class="line number20 index19 alt1">20</div><div class="line number21 index20 alt2">21</div><div class="line number22 index21 alt1">22</div><div class="line number23 index22 alt2">23</div><div class="line number24 index23 alt1">24</div><div class="line number25 index24 alt2">25</div><div class="line number26 index25 alt1">26</div><div class="line number27 index26 alt2">27</div><div class="line number28 index27 alt1">28</div><div class="line number29 index28 alt2">29</div><div class="line number30 index29 alt1">30</div><div class="line number31 index30 alt2">31</div><div class="line number32 index31 alt1">32</div><div class="line number33 index32 alt2">33</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="c color1 bold">int</code> <code class="c plain">SolucaoValida(</code><code class="c color1 bold">int</code> <code class="c plain">linhas[]){</code></div><div class="line number2 index1 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">int</code> <code class="c plain">i;</code></div><div class="line number3 index2 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">int</code> <code class="c plain">x,y;</code></div><div class="line number4 index3 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">int</code> <code class="c plain">xx,yy;</code></div><div class="line number5 index4 alt2">&nbsp;</div><div class="line number6 index5 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">for</code><code class="c plain">(i = 0; i &lt; 8; i++){</code></div><div class="line number7 index6 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">x = i;</code></div><div class="line number8 index7 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">y = linhas[i];</code></div><div class="line number9 index8 alt2">&nbsp;</div><div class="line number10 index9 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">xx = x;</code></div><div class="line number11 index10 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">yy = y;</code></div><div class="line number12 index11 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">while</code><code class="c plain">(1){</code></div><div class="line number13 index12 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">xx += 1;</code></div><div class="line number14 index13 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">yy -= 1;</code></div><div class="line number15 index14 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">if</code><code class="c plain">(xx &gt; 7 || yy &lt; 0) </code><code class="c keyword bold">break</code><code class="c plain">;</code></div><div class="line number16 index15 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code>&nbsp;</div><div class="line number17 index16 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">if</code><code class="c plain">(yy == linhas[xx]) </code></div><div class="line number18 index17 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">return</code> <code class="c plain">0;</code></div><div class="line number19 index18 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number20 index19 alt1">&nbsp;</div><div class="line number21 index20 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">xx = x;</code></div><div class="line number22 index21 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">yy = y;</code></div><div class="line number23 index22 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">while</code><code class="c plain">(1){</code></div><div class="line number24 index23 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">xx -= 1;</code></div><div class="line number25 index24 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">yy -= 1;</code></div><div class="line number26 index25 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">if</code><code class="c plain">(xx &lt; 0 || yy &lt; 0) </code><code class="c keyword bold">break</code><code class="c plain">;</code></div><div class="line number27 index26 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code>&nbsp;</div><div class="line number28 index27 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">if</code><code class="c plain">(yy == linhas[xx]) </code></div><div class="line number29 index28 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">return</code> <code class="c plain">0;</code></div><div class="line number30 index29 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number31 index30 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number32 index31 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">return</code> <code class="c plain">1;</code></div><div class="line number33 index32 alt2"><code class="c plain">}</code></div></div></td></tr></tbody></table></div></div>
+
+
+Precisamos também de uma função
+para imprimir as soluções encontradas:
+
+  <div><div id="highlighter_810020" class="syntaxhighlighter  c"><div class="toolbar"><span><a href="http://www.vision.ime.usp.br/~pmiranda/mac122_2s14/aulas/aula20/aula20.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div><div class="line number15 index14 alt2">15</div><div class="line number16 index15 alt1">16</div><div class="line number17 index16 alt2">17</div><div class="line number18 index17 alt1">18</div><div class="line number19 index18 alt2">19</div><div class="line number20 index19 alt1">20</div><div class="line number21 index20 alt2">21</div><div class="line number22 index21 alt1">22</div><div class="line number23 index22 alt2">23</div><div class="line number24 index23 alt1">24</div><div class="line number25 index24 alt2">25</div><div class="line number26 index25 alt1">26</div><div class="line number27 index26 alt2">27</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="c keyword bold">void</code> <code class="c plain">ImprimeSolucao(</code><code class="c color1 bold">int</code> <code class="c plain">linhas[]){</code></div><div class="line number2 index1 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">char</code> <code class="c plain">tabuleiro[8][8];</code></div><div class="line number3 index2 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">int</code> <code class="c plain">i,j;</code></div><div class="line number4 index3 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">int</code> <code class="c plain">x,y;</code></div><div class="line number5 index4 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">static</code> <code class="c color1 bold">int</code> <code class="c plain">nsols = 0;</code></div><div class="line number6 index5 alt1">&nbsp;</div><div class="line number7 index6 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">nsols++;</code></div><div class="line number8 index7 alt1">&nbsp;</div><div class="line number9 index8 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c functions bold">printf</code><code class="c plain">(</code><code class="c string">"******** SOL: %d ********\n"</code><code class="c plain">,nsols);</code></div><div class="line number10 index9 alt1">&nbsp;</div><div class="line number11 index10 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">for</code><code class="c plain">(i = 0; i &lt; 8; i++)</code></div><div class="line number12 index11 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">for</code><code class="c plain">(j = 0; j &lt; 8; j++)</code></div><div class="line number13 index12 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">tabuleiro[i][j] = </code><code class="c string">'.'</code><code class="c plain">;</code></div><div class="line number14 index13 alt1">&nbsp;</div><div class="line number15 index14 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">for</code><code class="c plain">(i = 0; i &lt; 8; i++){</code></div><div class="line number16 index15 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">x = i;</code></div><div class="line number17 index16 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">y = linhas[i];</code></div><div class="line number18 index17 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">tabuleiro[y][x] = </code><code class="c string">'R'</code><code class="c plain">;</code></div><div class="line number19 index18 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number20 index19 alt1">&nbsp;</div><div class="line number21 index20 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">for</code><code class="c plain">(i = 0; i &lt; 8; i++){</code></div><div class="line number22 index21 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">for</code><code class="c plain">(j = 0; j &lt; 8; j++){</code></div><div class="line number23 index22 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c functions bold">printf</code><code class="c plain">(</code><code class="c string">" %c "</code><code class="c plain">,tabuleiro[i][j]);</code></div><div class="line number24 index23 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}&nbsp;&nbsp;&nbsp; </code></div><div class="line number25 index24 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c functions bold">printf</code><code class="c plain">(</code><code class="c string">"\n"</code><code class="c plain">);</code></div><div class="line number26 index25 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number27 index26 alt2"><code class="c plain">}</code></div></div></td></tr></tbody></table></div></div>
+
+
+<h3>Testando as permutações:</h3>
+
+Iniciamos com a construção
+do vetor <code>int linhas[8] = {0, 1, 2, 3, 4, 5, 6, 7};</code>, 
+ e, em seguida, chamamos a função recursiva
+<code>TestaPermutacoes</code>, responsável por gerar as
+permutações, iniciando no índice zero (segundo
+parâmetro da função).
+
+
+  <div><div id="highlighter_380191" class="syntaxhighlighter  c"><div class="toolbar"><span><a href="http://www.vision.ime.usp.br/~pmiranda/mac122_2s14/aulas/aula20/aula20.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="c keyword bold">void</code> <code class="c plain">Solucoes8Rainhas() {</code></div><div class="line number2 index1 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">int</code> <code class="c plain">linhas[8];</code></div><div class="line number3 index2 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">int</code> <code class="c plain">i;</code></div><div class="line number4 index3 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">for</code><code class="c plain">(i = 0; i &lt; 8; i++)</code></div><div class="line number5 index4 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">linhas[i] = i;</code></div><div class="line number6 index5 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">TestaPermutacoes(linhas, 0);</code></div><div class="line number7 index6 alt2"><code class="c plain">}</code></div></div></td></tr></tbody></table></div></div>
+
+Na função <code>TestaPermutacoes</code>,
+os elementos com índices menores que k
+estão fixos. A função
+deve gerar as permutações dos elementos
+com índices maiores ou iguais a k.
+Se k=8, então todos elementos estão fixos
+e o vetor deve ser verificado e impresso (caso trivial).
+Caso contrário, fixamos um novo elemento na posição k
+e testamos as permutações a partir do índice k+1.
+Repetimos esse processo fixando todos os possíveis
+elementos na posição k.
+
+
+  <div><div id="highlighter_400962" class="syntaxhighlighter  c"><div class="toolbar"><span><a href="http://www.vision.ime.usp.br/~pmiranda/mac122_2s14/aulas/aula20/aula20.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div><div class="line number15 index14 alt2">15</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="c keyword bold">void</code> <code class="c plain">TestaPermutacoes(</code><code class="c color1 bold">int</code> <code class="c plain">linhas[], </code><code class="c color1 bold">int</code> <code class="c plain">k) {</code></div><div class="line number2 index1 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">int</code> <code class="c plain">i;</code></div><div class="line number3 index2 alt2"><code class="c spaces">&nbsp;&nbsp;</code>&nbsp;</div><div class="line number4 index3 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">if</code><code class="c plain">(k == 8) {</code></div><div class="line number5 index4 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">if</code><code class="c plain">(SolucaoValida(linhas))</code></div><div class="line number6 index5 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">ImprimeSolucao(linhas);</code></div><div class="line number7 index6 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number8 index7 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">else</code><code class="c plain">{</code></div><div class="line number9 index8 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">for</code><code class="c plain">(i = k; i &lt; 8; i++) {</code></div><div class="line number10 index9 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">Troca(linhas, k, i);</code></div><div class="line number11 index10 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">TestaPermutacoes(linhas, k + 1);</code></div><div class="line number12 index11 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">Troca(linhas, i, k);</code></div><div class="line number13 index12 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number14 index13 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number15 index14 alt2"><code class="c plain">} </code></div></div></td></tr></tbody></table></div></div>
+
+<h3>Exemplo de programa principal:</h3>
+
+
+  <div><div id="highlighter_760390" class="syntaxhighlighter  c"><div class="toolbar"><span><a href="http://www.vision.ime.usp.br/~pmiranda/mac122_2s14/aulas/aula20/aula20.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="c preprocessor">#include &lt;stdio.h&gt;</code></div><div class="line number2 index1 alt1"><code class="c preprocessor">#include &lt;stdlib.h&gt;</code></div><div class="line number3 index2 alt2">&nbsp;</div><div class="line number4 index3 alt1"><code class="c comments">/*Colocar aqui as funções anteriores*/</code></div><div class="line number5 index4 alt2"><code class="c plain">...</code></div><div class="line number6 index5 alt1">&nbsp;</div><div class="line number7 index6 alt2"><code class="c color1 bold">int</code> <code class="c plain">main(){</code></div><div class="line number8 index7 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">Solucoes8Rainhas();</code></div><div class="line number9 index8 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">return</code> <code class="c plain">0;</code></div><div class="line number10 index9 alt1"><code class="c plain">}</code></div></div></td></tr></tbody></table></div></div>
+
+  <br>
+
+  <script src="./aula20_files/shCore.js"></script>
+  <script src="./aula20_files/shBrushCpp.js"></script>
+  <script>
+    SyntaxHighlighter.all()
+  </script>
+
+
+
+
+</body></html>

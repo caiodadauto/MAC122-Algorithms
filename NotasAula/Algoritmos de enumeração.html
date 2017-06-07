@@ -1,0 +1,915 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0052)http://www.ime.usp.br/~pf/algoritmos/aulas/enum.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Algoritmos de enumeração</title>
+<meta name="Author" content="Paulo Feofiloff">
+<meta name="description" content="Como gerar todas as sequências de um certo tipo?">
+<meta name="keywords" content="enumeracao, ordem lexicografica, recursao, C">
+<meta name="language" content="Portuguese">
+ 
+<link rel="stylesheet" href="./Algoritmos de enumeração_files/aulas.css" type="text/css">
+<style type="text/css"></style></head>
+<body>
+
+
+<div class="left">
+
+<span class="title"><b>Projeto de Algoritmos</b></span><br>
+<table cellspacing="0" cellpadding="3" width="100%">
+<tbody><tr><td class="navig">
+<small>
+<a class="navig" href="http://www.ime.usp.br/~pf/algoritmos/index.html">Home</a> 
+&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;
+<a class="navig" href="http://www.ime.usp.br/~pf/algoritmos/prefacio.html">Prefácio</a> 
+&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;
+<a class="navig" href="http://www.ime.usp.br/~pf/algoritmos/livros.html">Livros</a> 
+&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;
+<a class="navig" href="http://www.ime.usp.br/~pf/algoritmos/sitios.html">Sítios WWW</a> 
+&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;
+<a class="navig" href="http://www.ime.usp.br/~pf/algoritmos/idx.html">Índice</a>
+</small>
+</td></tr></tbody></table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p class="epigrafe">
+
+<small>Enumere as estrelas de nossa galáxia.</small><br>
+<span class="epigrafesignature">—</span>
+
+
+</p><p class="epigrafe">
+<small>Quantas vezes a palavra "algoritmo"
+aparece neste sítio?</small><br>
+<span class="epigrafesignature">—</span>
+
+
+</p><p class="epigrafe">
+<small>
+"<a class="translate" href="http://www.ime.usp.br/~pf/algoritmos/aulas/footnotes/epigraphs.html#exhaustive">Often it appears that there is no better way to solve a problem<br>
+than to try all possible solutions.<br>
+This approach, called <i>exhaustive search</i>,
+is almost always slow,<br>
+but sometimes it is better than nothing.</a>"<br>
+<span class="epigrafesignature">—<a href="http://www.eng.unt.edu/ian/">Ian Parberry</a>, <i>Problems on Algorithms</i></span>
+</small>
+
+
+
+
+
+</p><h1 id="enumeration">Algoritmos de enumeração</h1>
+
+
+
+<p>Para resolver certos problemas
+é necessário <dfn>enumerar</dfn>&nbsp;—
+ou seja, fazer uma lista de&nbsp;—
+todos os objetos 
+de um determinado tipo.
+O número de objetos
+é tipicamente muito grande,
+e portanto os algoritmos enumerativos consomem
+uma enorme quantidade de tempo.
+
+</p><p>Os algoritmos enumerativos não são complexos,
+mas têm suas sutilezas.
+As versões recursivas
+são particularmente úteis e interessantes.
+
+</p><p>Problemas de enumeração estão relacionado com palavras-chave como 
+<i>busca exaustiva</i>,
+<i>força bruta</i>, 
+<i>backtracking</i>, 
+<i>branch-and-bound</i>.
+
+
+
+
+
+
+
+
+
+
+</p><h2>Enumeração de subsequências</h2>
+
+
+
+<p id="subsequence">Vamos adotar a abreviatura <tt>1..n</tt> para 
+<tt>1</tt>, <tt>2</tt>, ... , <tt>n</tt>
+e a abreviatura <tt>s[1..k]</tt>
+para <tt>s[1]</tt>, <tt>s[2]</tt>, ... , <tt>s[k]</tt>.&nbsp;
+
+Uma <dfn>subsequência</dfn> de <tt>1..n</tt>
+é qualquer sequência&nbsp; <tt>s[1..k]</tt>&nbsp;
+tal que 
+
+</p><p class="center">
+<tt>1</tt> &nbsp; &#8804; &nbsp;
+<tt>s[1]</tt> &nbsp; &lt; &nbsp;
+<tt>s[2]</tt> &nbsp; &lt; &nbsp;
+. . . &nbsp; &lt; &nbsp; 
+<tt>s[k]</tt> &nbsp; &#8804; &nbsp;
+<tt>n</tt>&#8201;. 
+
+
+</p><p>Em outras palavras, uma subsequência  
+é o que se obtém quando alguns termos da sequência
+são apagados.
+Exemplo:&nbsp;
+<tt>2</tt>,<tt>3</tt>,<tt>5</tt> é uma subsequência de 
+<tt>1..5</tt>.
+Nosso problema:
+
+</p><blockquote>
+Enumerar todas as subsequências de&nbsp; <tt>1..n</tt>,&nbsp;
+ou seja,&nbsp; fazer uma lista em que cada subsequência
+apareça uma e uma só vez.
+</blockquote>
+
+
+
+<p>Há uma correspondência biunívoca óbvia
+entre subsequências de 
+<tt>1..n</tt> e&nbsp; subconjuntos&nbsp;
+do conjunto
+<tt>{1</tt>, <tt>2</tt>,&#8201;.&nbsp;.&nbsp;.&#8201;, <tt>n}</tt>.
+Portanto, o número de subsequências de 
+<tt>1..n</tt> é 
+
+</p><p class="center">
+<tt>2<sup>n</sup></tt>&#8201;.
+
+</p><p>O número de subsequências aumenta
+explosivamente com <tt>n</tt>:&nbsp; 
+ele dobra toda vez que <tt>n</tt> aumenta de uma unidade.
+
+
+
+
+
+
+
+</p><h2 id="allsubseqs">Subsequências em ordem lexicográfica</h2>
+
+
+
+<p>A ordem em que as subsequências de <tt>1..n</tt>
+são enumeradas não é muito importante,
+mas certas ordens são mais naturais que outras.
+Uma das ordens mais naturais é a 
+<a href="http://www.ime.usp.br/~pf/algoritmos/aulas/string.html#lexicography"><i>lexicográfica</i></a>
+(esta é a ordem em que palavras aparecem em um dicionário).
+Uma sequência 
+<tt>r[1..j]</tt>
+é <dfn>lexicograficamente menor</dfn> que outra
+<tt>s[1..k]</tt>
+se
+
+</p><ol>
+<li class="space">&nbsp; existe <tt>i</tt> tal que&nbsp;
+<tt>r[1..i-1]</tt>&nbsp;<tt>=</tt>&nbsp;<tt>s[1..i-1]</tt>&nbsp;
+e&nbsp; <tt>r[i]</tt>&nbsp;<tt>&lt;</tt>&nbsp;<tt>s[i]</tt>&nbsp; 
+ou 
+
+</li><li class="space">&nbsp; <tt>j</tt>&nbsp;<tt>&lt;</tt>&nbsp;<tt>k</tt>&nbsp;
+e&nbsp; <tt>r[1..j]</tt>&nbsp;<tt>=</tt>&nbsp;<tt>s[1..j]</tt>&#8201;.
+</li></ol>
+
+<p>Exemplo: Eis a lista,
+em ordem lexicográfica,
+de todas as subsequências não vazias de <tt>1..4</tt>:
+
+
+<table class="BB" align="center">
+<tbody><tr><td>
+<pre>1
+1 2
+1 2 3
+1 2 3 4
+1 2 4
+1 3
+1 3 4
+1 4
+2
+2 3
+2 3 4
+2 4
+3
+3 4
+4
+</pre>
+
+</td></tr></tbody></table>
+
+
+</p><p>A lista do exemplo poderia ter sido gerada pela seguinte função.
+
+</p><pre class="hlt"><span class="comm">// Recebe n &gt;= 1 e imprime todas as subsequências
+// não vazias de 1..n em ordem lexicográfica.</span>
+
+void <b>subseqLex</b>( int n)
+{ 
+   int *s, k;    
+   s = <a href="http://www.ime.usp.br/~pf/algoritmos/aulas/aloca.html#mallocc">mallocc</a>( (n+1) * sizeof (int));
+   s[0] = 0;
+   k = 0;
+
+   while (1) {
+      if (s[k] &lt; n) {
+         s[k+1] = s[k] + 1;
+         k += 1;
+      } else {
+         s[k-1] += 1;
+         k -= 1;
+      }
+      if (k == 0) break;
+      imprima( s, k);
+   }
+   free( s);
+}
+</pre>
+
+
+
+<table class="BB" align="center">
+<tbody><tr align="center">
+<td width="30"><tt>0</tt>
+</td><td width="30"><tt>1</tt>
+</td><td width="30"><tt>&nbsp;</tt>
+</td><td width="30"><tt>&nbsp;</tt>
+</td><td width="30"><tt>&nbsp;</tt>
+</td><td width="30"><tt>k</tt>
+</td><td width="30"><tt>&nbsp;</tt>
+</td><td width="30"><tt>n</tt>
+</td></tr><tr align="center">
+<td bgcolor="#606060"><tt>0</tt>
+</td><td bgcolor="#a0e0a0"><tt>2</tt>
+</td><td bgcolor="#a0e0a0"><tt>4</tt>
+</td><td bgcolor="#a0e0a0"><tt>5</tt>
+</td><td bgcolor="#a0e0a0"><tt>7</tt>
+</td><td bgcolor="#a0e0a0"><tt>8</tt>
+</td><td bgcolor="#606060"><tt>xxx</tt>
+</td><td bgcolor="#606060"><tt>xxx</tt>
+</td></tr></tbody></table>
+
+
+
+
+<p>Cada iteração começa com uma 
+subsequência <tt>s[1..k]</tt> de <tt>1..n</tt>.
+A primeira iteração começa com a subsequência vazia.
+Cada iteração gera a sucessora de <tt>s[1..k]</tt> na ordem lexicográfica.
+Se <tt>s[1..k]</tt> não tiver sucessora,
+o processo termina.
+
+
+</p><p>Observações:
+</p><ul>
+<li class="space">A expressão <tt>imprima(</tt>&nbsp;<tt>s,</tt>&nbsp;<tt>k)</tt> 
+não faz mais
+que imprimir <tt>s[1..k]</tt>.
+
+
+</li><li class="space">A "sentinela" <tt>s[0]</tt> foi definida para que 
+a instrução <tt>s[k-1]</tt> <tt>+=</tt> <tt>1</tt> possa ser executada 
+quando <tt>k</tt> é <tt>1</tt>,
+coisa que acontece somente na última iteração.
+
+</li><li class="space">Note que <tt>s[1..k]</tt> se comporta como uma 
+<a href="http://www.ime.usp.br/~pf/algoritmos/aulas/pilha.html">pilha</a>,
+com topo <tt>s[k]</tt>.&nbsp;
+</li></ul>
+
+
+
+<h2>Subsequências em ordem lexicográfica: versão recursiva</h2>
+
+<p>A versão recursiva de <tt>subseqLex</tt> é muito interessante.
+
+A interface com o usuário fica a cargo da seguinte função-"embalagem":
+
+
+
+</p><pre class="hlt"><span class="comm">// A função subseqLex2 recebe n e imprime,
+// em ordem lexicográfica,
+// todas as subsequências não vazias de 1..n.</span>
+
+void <b>subseqLex2</b>( int n)
+{
+   int *s;    
+   s = mallocc( (n+1) * sizeof (int));
+   recurs( s, 0, 1, n);
+   free( s);
+}
+</pre>
+
+<p>O serviço pesado é todo executado pela função recursiva <tt>recurs</tt>.
+Para cada valor de&nbsp;<tt>m</tt>,
+ela imprime todas as subsequências que incluem <tt>m</tt>
+e depois todas as que não incluem&nbsp;<tt>m</tt>.
+
+</p><pre class="hlt">void <b>recurs</b>( int s[], int k, int m, int n)
+{
+   if (m &lt;= n) {
+      s[k+1] = m;
+      imprima( s, k+1);
+      recurs( s, k+1, m+1, n); <span class="comm">// inclui m</span>
+      recurs( s, k,   m+1, n); <span class="comm">// não inclui m</span>
+   }
+}
+</pre>
+
+
+<p>Que coisa faz, exatamente, a função <tt>recurs</tt>?
+Como explicar o funcionamento da função? Eis a resposta:
+
+
+</p><pre class="ind">   A função recurs recebe s[1..k] e m e imprime,
+   em ordem lexicográfica, cada uma das subsequências
+   não vazias de m..n precedida do prefixo s[1..k].
+   Em outras palavras, imprime todas as sequências que
+   têm a forma s[1..k]t[k+1...], sendo t[k+1...] uma
+   subsequência não vazia de m..n.
+</pre>
+
+<p>Exemplo: Suponha que <tt>s[1]</tt> vale <tt>2</tt>, 
+que <tt>s[2]</tt> vale <tt>4</tt>
+e que <tt>n</tt> vale&nbsp;<tt>9</tt>.
+Então o comando <tt>recurs(</tt>&nbsp;<tt>s,2,7,n)</tt> gera a lista 
+
+</p><pre class="ind">     2 4 7
+     2 4 7 8
+     2 4 7 8 9
+     2 4 7 9
+     2 4 8
+     2 4 8 9
+     2 4 9
+</pre>
+
+
+<p>A primeira linha é gerada por 
+<tt>imprima(</tt>&nbsp;<tt>s,3)</tt>;
+as três linhas seguintes são geradas por 
+<tt>recurs(</tt>&nbsp;<tt>s,3,8,n)</tt>;
+as demais por 
+<tt>recurs(</tt>&nbsp;<tt>s,2,8,n)</tt>.
+
+</p><p>Portanto, <tt>recurs(</tt>&nbsp;<tt>s,0,1,n)</tt>
+faz exatamente o que queremos:
+imprime todas as subsequências de <tt>1..n</tt>
+que têm a forma <tt>t[1...]</tt> com 
+<tt>t[1]</tt>&nbsp;&#8805;&nbsp;<tt>1</tt>,
+ou seja, imprime todas as 
+subsequências não vazias de <tt>1..n</tt>.
+
+
+</p><p id="exponentialspace">A versão recursiva da função tem uma importante desvantagem
+em relação à versão iterativa vista acima:&nbsp;
+ela usa uma quantidade exponencial de memória.
+(Essa memória&nbsp;—
+proporcional a&nbsp;<tt>2<sup>n</sup></tt>&nbsp;—
+é usada pela <a href="http://www.ime.usp.br/~pf/algoritmos/aulas/pilha.html#pilhadeexecucao">pilha de recursão</a>.)&nbsp;
+A&nbsp;versão iterativa, ao contrário,
+só precisa da memória "de trabalho"
+usada para armazenar o vetor&nbsp;<tt>s[0..n]</tt>.
+
+
+
+
+
+
+
+
+
+
+</p><h2 class="exr">Exercícios</h2>
+
+<div class="exr">
+<ol start="1">
+
+<li class="exr">Analise a seguinte versão alternativa de <tt>subseqLex</tt>.
+
+
+<pre class="ind">   int *s, k;    
+   s = mallocc( (n+1) * sizeof (int));
+   s[0] = 0; s[1] = 1; 
+   k = 1;
+   while (k &gt;= 1) {
+      imprima( s, k);
+      if (s[k] &lt; n) {
+         s[k+1] = s[k] + 1; k += 1;
+      } else {
+         s[k-1] += 1; k -= 1;
+      }
+   }
+</pre>
+
+</li><li class="exr">Analise a seguinte versão alternativa de <tt>subseqLex</tt>:
+
+<pre class="ind">   int *s, k;    
+   s = mallocc( (n+1) * sizeof (int));
+   s[1] = 1;
+   imprima( s, 1);
+   k = 1;
+   while (s[1] &lt; n) {
+      if (s[k] &lt; n) {
+         s[k+1] = s[k] + 1; k += 1;
+      } else {
+         s[k-1] += 1; k -= 1;
+      }
+      imprima( s, k);
+   }
+</pre>
+
+
+</li><li class="exr">
+Escreva uma função que 
+receba uma subsequência <tt>s[1..k]</tt> de <tt>1..n</tt>
+e gere, no espaço alocado para <tt>s[]</tt>,
+a próxima subsequência na ordem lexicográfica.
+A função deve devolver o número de termos
+(<tt>k+1</tt> ou <tt>k-1</tt>)
+desta nova subsequência.
+
+
+
+</li><li class="exr">
+Verifique que a ordem lexicográfica sobre o 
+conjunto de todas as subsequências de <tt>1..n</tt>
+é uma <dfn>ordem total</dfn>, ou seja,
+para quaisquer subsequências <i>r</i> e <i>s</i> tem-se
+
+
+
+<ol class="little">
+<li>&nbsp; <i>r</i> &#8804; <i>s</i>&nbsp;&nbsp;
+ou&nbsp;&nbsp; <i>s</i> &#8804; <i>r</i>&#8201;,
+
+</li><li>&nbsp; se&nbsp; <i>r</i> &#8804; <i>s</i>&nbsp;&nbsp;
+e&nbsp;&nbsp; 
+<i>s</i> &#8804; <i>r</i>&nbsp; 
+então&nbsp; <i>r</i> = <i>s</i>&#8201;,
+
+</li><li>&nbsp; se&nbsp; <i>r</i> &#8804; <i>s</i>&nbsp;&nbsp;
+e&nbsp;&nbsp; 
+<i>s</i> &#8804; <i>t</i>&nbsp;
+então&nbsp; <i>r</i> &#8804; <i>t</i>&#8201;,
+</li></ol>
+
+<p class="noindent">onde&nbsp; "&#8804;"&nbsp; denota a relação 
+"lexicograficamente menor que ou igual a".
+
+
+</p></li><li class="exr">
+O <dfn>vetor característico</dfn>
+de uma subsequência <tt>s[1..k]</tt> de <tt>1..n</tt>
+é a sequência&nbsp; <tt>b[1..n]</tt>&nbsp; de bits
+que indica quais dos elementos <tt>1..n</tt>
+estão <tt>s[1..k]</tt>&nbsp;
+(portanto <tt>b[i]</tt> vale <tt>1</tt>
+se <tt>i</tt> está na subsequência e
+vale <tt>0</tt> em c aso contrário).&nbsp;
+Para <tt>n=5</tt>, por exemplo,
+o vetor característico de&nbsp;
+<tt>2</tt>&nbsp;<tt>3</tt>&nbsp;<tt>5</tt>&nbsp;
+é&nbsp;
+<tt>01101</tt>&nbsp;.&nbsp;
+Escreva código que calcule o vetor característico
+de uma subsequência <tt>s[1..k]</tt> de&nbsp;<tt>1..n</tt>.&nbsp;
+Escreva uma função que imprima todas as subsequências de <tt>1..n</tt>
+da seguinte maneira:
+gera todas sequências de bits <tt>b[1..n]</tt> em ordem lexicográfica
+e para cada sequência de bits gerada
+imprime a correspondente subsequência <tt>s[1..k]</tt> de&nbsp;<tt>1..n</tt>.&nbsp;
+(Sugestão:
+imagine que um vetor de bits representa um número em notação binária
+e gere os vetores de bits em ordem numérica crescente.)&nbsp;
+Sua função imprime as subsequências em ordem lexicográfica?
+
+</li></ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+<h2>Subsequências em ordem lexicográfica especial</h2>
+
+<p>A ordem lexicográfica "especial" 
+dá preferência às subsequências mais longas.
+Eis a definição formal:
+uma sequência 
+<tt>r[1..j]</tt>
+<dfn>precede</dfn> outra 
+<tt>s[1..k]</tt>
+<dfn>na ordem lexicográfica especial</dfn> se
+
+</p><ol>
+<li class="space"> &nbsp;existe <tt>i</tt> tal que 
+<tt>r[1..i-1]</tt> é igual a <tt>s[1..i-1]</tt>
+e <tt>r[i]</tt> &lt; <tt>s[i]</tt>&nbsp; ou 
+
+</li><li class="space"> &nbsp;<tt>j</tt> <span class="red"><b>&gt;</b></span> <tt>k</tt>&nbsp; 
+e&nbsp; <tt>r[1..k]</tt> é igual a <tt>s[1..k]</tt>&#8201;.
+</li></ol>
+
+<p>Exemplo: Eis a lista,
+em ordem lexicográfica especial,
+de todas as subsequências de <tt>1..4</tt>:
+
+<table class="MS" align="center">
+<tbody><tr><td>
+<pre>1 2 3 4
+1 2 3
+1 2 4
+1 2
+1 3 4
+1 3
+1 4
+1
+2 3 4
+2 3
+2 4
+2
+3 4
+3
+4
+</pre>
+
+</td></tr></tbody></table>
+
+</p><p>A lista do exemplo poderia ter sido
+gerado pela seguinte função iterativa:
+
+</p><pre class="ind"><span class="comm">// Recebe n &gt;= 1 e imprime todas as subsequências
+// não vazias de 1..n em ordem lexicográfica especial.</span>
+
+void subseqLexEsp( int n) { 
+   int *s, k;    
+   s = mallocc( (n+1) * sizeof (int));
+   s[1] = 0;
+   k = 1;
+   while (1) {
+      if (s[k] == n) {
+         k -= 1; 
+         if (k == 0) break;
+      } else {
+         s[k] += 1; 
+         while (s[k] &lt; n) {
+            s[k+1] = s[k] + 1;
+            k += 1;
+         }
+      }
+      imprima( s, k);
+   }
+   free( s);
+}
+</pre>
+
+<p>Eis a versão recursiva da função:
+
+</p><pre class="hlt"><span class="comm">// Recebe n e imprime todas as subsequências 
+// de 1..n (inclusive a subsequência vazia).</span>
+
+void <b>subseqLexEsp2</b>( int n) {
+   int *s;    
+   s = mallocc( (n+1) * sizeof (int));
+   recursEsp( s, 0, 1, n);
+   free( s);
+}
+
+<span class="comm">// Esta função auxiliar recebe s[1..k] e imprime, 
+// em ordem lexicográfica especial,
+// todas as subsequências da forma s[1..k]t[k+1..]
+// onde t[k+1..] é uma subsequência de m..n.
+// Em seguida, imprime a sequência s[1..k].</span>
+
+void <b>recursEsp</b>( int s[], int k, int m, int n) {
+   if (m &gt; n) imprima( s, k);
+   else {
+      s[k+1] = m;
+      recursEsp( s, k+1, m+1, n); <span class="comm">// inclui m</span>
+      recursEsp( s, k,   m+1, n); <span class="comm">// não inclui m</span>
+   }
+}
+</pre>
+
+
+
+<p>Exemplo: Suponha que <tt>s[1]</tt> vale <tt>2</tt>, 
+que <tt>s[2]</tt> vale <tt>4</tt>
+e que <tt>n</tt> vale&nbsp;<tt>9</tt>.
+Então o comando <tt>recursEsp(</tt>&nbsp;<tt>s,2,7,n)</tt> imprime a lista 
+
+</p><pre class="ind">     2 4 7 8 9
+     2 4 7 8
+     2 4 7 9
+     2 4 7
+     2 4 8 9
+     2 4 8
+     2 4 9
+     2 4 
+</pre>
+
+<p>Portanto, <tt>recurs(</tt>&nbsp;<tt>s,0,1,n)</tt>
+imprime todas subsequências de <tt>1..n</tt>,
+inclusive a vazia.
+
+</p><p>A versão recursiva da função
+<a href="http://www.ime.usp.br/~pf/algoritmos/aulas/enum.html#exponentialspace">usa uma quantidade de espaço
+proporcional a <tt>2<sup>n</sup></tt></a>,
+enquanto a versão iterativa só precisa de espaço proporcional a&nbsp;<tt>n</tt>.
+
+
+
+
+
+
+
+
+
+</p><h2 class="exr">Exercícios</h2>
+
+<div class="exr">
+<ol start="6">
+
+<li class="exr">
+As subsequências de <tt>1..n</tt> podem ser colocadas
+"em ordem militar".&nbsp;
+A figura ilustra a ordem no caso em que 
+<tt>n</tt> vale&nbsp;<tt>4</tt>.&nbsp;&nbsp;
+Analise essa ordem.
+Escreva funções iterativa e recursiva que gerem
+todas as subsequências de <tt>1..n</tt> em ordem militar.
+
+
+<table class="MS" align="center">
+<tbody><tr><td>
+<pre>1
+2
+3
+4
+1 2
+1 3
+1 4
+2 3
+2 4
+3 4
+1 2 3
+1 2 4
+1 3 4
+2 3 4
+1 2 3 4
+</pre>
+
+</td></tr></tbody></table>
+
+
+
+</li><li class="exr" id="subsetsum">
+
+<span class="smallcaps">Subset Sum</span>.&nbsp;
+Suponha que você emitiu cheques 
+nos valores de <tt>p[1]</tt>, ... , <tt>p[n]</tt>
+ao longo de um mês.
+No fim do mês, o banco informa que 
+um total <tt>t</tt> foi descontado de sua conta.
+Quais dos cheques foram descontados?
+Por exemplo, se 
+<tt>p</tt> = <tt>61</tt>,<tt>62</tt>,<tt>63</tt>,<tt>64</tt> 
+e <tt>t</tt> = <tt>125</tt>
+então só há duas possibilidades:
+ou foram descontados os cheques <tt>1</tt> e <tt>4</tt> 
+ou foram descontados os cheques <tt>2</tt> e <tt>3</tt>.
+Este é o problema da "soma de subconjunto",
+mais conhecido como <i>subset sum</i>:
+<blockquote>
+Dado um número <tt>t</tt> e um vetor
+<tt>p[1..n]</tt>,
+encontrar todas as subsequências
+
+<tt>s[1..k]</tt> de <tt>1..n</tt> tais que&nbsp;&nbsp;
+<tt class="nw">p[s[1]] + . . . + p[s[k]] = t</tt>&#8201;.
+</blockquote>
+<p class="noindent">Escreva uma função que resolva o problema.&nbsp;
+
+
+</p></li></ol>
+</div>
+
+
+
+
+
+
+<h2 class="exr">Mais exercícios</h2>
+
+<div class="exr">
+<ol start="8">
+
+<li class="exr" id="combinations">
+
+<span class="smallcaps">Combinações.</span>&nbsp;
+Escreva uma função que imprima todas as subsequências de&nbsp;
+<tt>1..n</tt>&nbsp;
+que têm exatamente&nbsp; <tt>k</tt>&nbsp;
+termos.&nbsp;
+(Isso corresponde, exatamente, 
+aos subconjuntos de <tt>{1,..,n}</tt>
+que têm exatamente <tt>k</tt> elementos.)&nbsp;
+
+
+
+
+    
+
+</li><li class="exr" id="permutations">
+
+<span class="smallcaps">Permutações.</span>&nbsp;
+Uma <dfn>permutação</dfn>
+da sequência&nbsp; <tt>1..n</tt>&nbsp;
+é qualquer rearranjo dessa sequência.
+Por exemplo, as 6 permutações de <tt>123</tt> são
+<tt>123</tt>,
+<tt>132</tt>,
+<tt>213</tt>,
+<tt>231</tt>,
+<tt>312</tt>,
+<tt>321</tt>.&nbsp;
+Escreva uma função que imprima,
+exatamente uma vez,
+cada uma das&nbsp; 
+<tt>n!</tt>&nbsp; permutações de <tt>1..n</tt>.&nbsp;
+
+
+</li><li class="exr" id="derangements">
+
+<span class="smallcaps">Desarranjos.</span>&nbsp;
+Um <dfn>desarranjo</dfn> (=&nbsp;<i>derangement</i>)
+da sequência&nbsp; <tt>1..n</tt>&nbsp;
+é qualquer permutação dessa sequência que muda <em>todos</em> os 
+termos de posição. 
+Em outras palavras, um desarranjo de <tt>1..n</tt> é qualquer 
+permutação <tt>p[1..n]</tt> de <tt>1..n</tt> tal que 
+<tt>p[i]</tt> é diferente de <tt>i</tt> para todo <tt>i</tt>.&nbsp;
+Por exemplo, os 9 desarranjos de <tt>1234</tt> são
+<tt>2143</tt>,
+<tt>2341</tt>,
+<tt>2413</tt>,
+<tt>3142</tt>,
+<tt>3412</tt>,
+<tt>3421</tt>,
+<tt>4123</tt>,
+<tt>4312</tt>,
+<tt>4321</tt>.&nbsp;
+Escreva uma função que imprima,
+exatamente uma vez,
+cada desarranjo de <tt>1..n</tt>.&nbsp;
+
+
+</li><li class="exr" id="partitions">
+
+<span class="smallcaps">Partições.</span>&nbsp;
+Escreva uma função que imprima uma lista de 
+todas as <a href="http://www.ime.usp.br/~pf/algoritmos/aulas/footnotes/partition.html">partições</a>
+do conjunto {1,2,&#8201;.&nbsp;.&nbsp;.&#8201;,&nbsp;<i>n</i>}
+em <i>m</i> blocos não vazios.
+Você pode representar uma tal partição por um vetor <i>p</i>[1..<i>n</i>]
+com valores em [1..<i>m</i>] dotado da seguinte propriedade:
+para cada <i>i</i> em [1..<i>m</i>]
+existe <i>j</i> tal que <i>p</i>[<i>j</i>] = <i>i</i>.
+
+
+</li><li class="exr" id="eightqueens">
+
+<span class="smallcaps">Problema das Rainhas.</span>&nbsp;
+É possível colocar 8 rainhas do jogo de xadrez sobre o tabuleiro
+de modo que nenhuma das rainhas possa atacar outra?&nbsp;&nbsp;
+
+
+</li><li class="exr" id="knight">
+
+<span class="smallcaps">Passeio do Cavalo.</span>&nbsp;
+Suponha dado um tabuleiro de xadrez 
+<tt>n</tt>-por-<tt>n</tt>&#8201;.
+Determine se é possível que um 
+cavalo (=&nbsp;<i>knight</i>) do jogo de xadrez 
+parta da posição <tt>(1,1)</tt> do tabuleiro 
+e complete um passeio por todas 
+as <tt>n×n</tt>
+posições do tabuleiro em <tt>n×n-1</tt> passos válidos. 
+Por exemplo para um tabuleiro 
+<tt>5</tt>-por-<tt>5</tt> 
+uma solução do problema&nbsp;é
+
+
+
+<pre class="ind">                    1  6 15 10 21
+                   14  9 20  5 16
+                   19  2  7 22 11
+                    8 13 24 17  4
+                   25 18  3 12 23
+</pre>
+
+<p class="noindent">Sugestão:
+Numere as casas do tabuleiro da maneira óbvia
+(a primeira linha da esquerda para a direita, depois a segunda linha etc.).
+Agora examine todas as permutações de <tt>1,2,..,n<sup>2</sup></tt>.
+Para cada permutação, verifique se ela representa um passeio do cavalo.
+
+
+
+</p></li><li class="exr">
+Familiarize-se com o <a href="http://theory.cs.uvic.ca/cos.html">Combinatorial Object Server</a>
+de Frank Ruskey.
+
+</li></ol>
+</div>
+
+
+
+
+
+
+
+
+
+<p>&nbsp;
+</p><div class="left">
+<hr>
+<small>
+URL of this site: www.ime.usp.br/~pf/algoritmos/<br>
+
+Last modified: Tue Sep 17 06:59:43 BRT 2013 
+<br>
+<em>Paulo Feofiloff</em><br>
+<em>IME-USP</em>
+</small>
+</div>
+
+
+
+
+<p class="right">
+<a href="http://validator.w3.org/check?uri=http://www.ime.usp.br/~pf/algoritmos/aulas/enum.html">
+<img border="0" src="./Algoritmos de enumeração_files/valid-html401.png" alt="Valid HTML 4.01 Transitional" height="31" width="88"></a>
+&nbsp;&nbsp;&nbsp;
+<a href="http://jigsaw.w3.org/css-validator/validator?uri=http://www.ime.usp.br/~pf/algoritmos/aulas/enum.html">
+<img style="border:0;width:88px;height:31px" src="./Algoritmos de enumeração_files/vcss.png" alt="Valid CSS!"></a>
+
+
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+</p><p>&nbsp;
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script src="./Algoritmos de enumeração_files/ga.js" type="text/javascript"></script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-10925343-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+
+</p></body></html>

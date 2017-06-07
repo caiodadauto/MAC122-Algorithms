@@ -1,0 +1,121 @@
+
+<!-- saved from url=(0075)http://www.vision.ime.usp.br/~pmiranda/mac122_2s14/aulas/aula13/aula13.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link href="./aula13_files/shCore.css" rel="stylesheet" type="text/css">
+  <link href="./aula13_files/shThemeDefault.css" rel="stylesheet" type="text/css">
+<style type="text/css"></style></head>
+
+<body>
+
+  <h2>Notação infixa para pós-fixa:</h2>
+
+A manipulação de expressões matemáticas
+é um exemplo de aplicação do uso de pilhas.
+Aqui vamos mostrar a transformação da notação 
+infixa para pós-fixa.
+<br>
+Na notação tradicional (notação infixa)
+temos que o operador aparece entre os seus dois operandos.
+Já na notação pós-fixa, também conhecida como
+notação polonesa inversa, 
+o operador é colocado após os seus dois operandos.
+<p>
+Exemplos:
+
+<table border="1" cellpadding="5">
+<tbody><tr><th>infixa</th><th>pós-fixa</th></tr>
+<tr><td>a-b</td><td>ab-</td></tr>
+<tr><td>a-b*c</td><td>abc*-</td></tr>
+<tr><td>(a-b)*c</td><td>ab-c*</td></tr>
+<tr><td>a+b*c^d-e</td><td>abcd^*+e-</td></tr>
+<tr><td>a*(b+c)*(d-g)*h</td><td>abc+*dg-*h*</td></tr>
+<tr><td>a*b-c*d^e/f+g*h</td><td>ab*cde^*f/-gh*+</td></tr>
+</tbody></table>
+</p><p>
+Na notação pós-fixa é importante observar que:
+</p><ul>
+<li>Não é necessário parênteses.</li>
+<li>A ordem dos operadores na expressão diz a ordem em que eles vão 
+ser executados (da esquerda para a direita).
+<img src="./aula13_files/ordem.png" alt="" height="150"></li>
+</ul>
+
+<p>
+Nos exemplos acima, podemos observar também que:
+</p><ul>
+<li>Os nomes das variáveis são copiados
+da entrada infixa para a saída pós-fixa na mesma
+ordem.</li>
+<li>Os operadores esperam até que apareça na entrada um de 
+prioridade menor ou igual.</li>
+</ul>
+
+Observe no exemplo "a+b*c^d-e" que os
+operadores +,*,^ aparecem na expressão pós-fixa "abcd^*+e-" 
+em ordem inversa. Isso sugere o uso de uma pilha para armazenar os
+símbolos, visto que em uma pilha o último elemento 
+a entrar é o primeiro a sair (política LIFO).
+Ou seja, elementos removidos de uma pilha aparecem em ordem invertida
+em relação a ordem de inserção.
+<p>
+Durante o processo de conversão,
+os caracteres da expressão infixa são processados 
+da esquerda para a direita.
+Quando operadores com maior prioridade são vistos, 
+esses são empilhados de modo a ocupar o topo da pilha. 
+Eles devem permanecer na pilha até
+aparecer na entrada um operador de prioridade menor ou igual.
+Nesse caso, não há porque postergar 
+a sua execução, e o operador deve ser impresso 
+imediatamente na saída.
+
+
+</p><h3>Problema:</h3>
+
+Faça uma função que recebe
+uma string contendo uma expressão em notação infixa
+e que imprime a sua expressão correspondente em notação 
+pós-fixa. Considere os seguintes operadores: '+', '-', '*', '/' e '^'.
+No caso de operadores de mesmo nível de prioridade, considere a
+associação à esquerda. A exceção é
+o operador '^' que deve ser associado a direita.
+
+<h3>Resolução:</h3>
+
+  <div><div id="highlighter_565663" class="syntaxhighlighter  c"><div class="toolbar"><span><a href="http://www.vision.ime.usp.br/~pmiranda/mac122_2s14/aulas/aula13/aula13.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div><div class="line number15 index14 alt2">15</div><div class="line number16 index15 alt1">16</div><div class="line number17 index16 alt2">17</div><div class="line number18 index17 alt1">18</div><div class="line number19 index18 alt2">19</div><div class="line number20 index19 alt1">20</div><div class="line number21 index20 alt2">21</div><div class="line number22 index21 alt1">22</div><div class="line number23 index22 alt2">23</div><div class="line number24 index23 alt1">24</div><div class="line number25 index24 alt2">25</div><div class="line number26 index25 alt1">26</div><div class="line number27 index26 alt2">27</div><div class="line number28 index27 alt1">28</div><div class="line number29 index28 alt2">29</div><div class="line number30 index29 alt1">30</div><div class="line number31 index30 alt2">31</div><div class="line number32 index31 alt1">32</div><div class="line number33 index32 alt2">33</div><div class="line number34 index33 alt1">34</div><div class="line number35 index34 alt2">35</div><div class="line number36 index35 alt1">36</div><div class="line number37 index36 alt2">37</div><div class="line number38 index37 alt1">38</div><div class="line number39 index38 alt2">39</div><div class="line number40 index39 alt1">40</div><div class="line number41 index40 alt2">41</div><div class="line number42 index41 alt1">42</div><div class="line number43 index42 alt2">43</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="c keyword bold">void</code> <code class="c plain">In2Pos(</code><code class="c color1 bold">char</code> <code class="c plain">expr[]){</code></div><div class="line number2 index1 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">Pilha p;</code></div><div class="line number3 index2 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">int</code> <code class="c plain">i = 0;</code></div><div class="line number4 index3 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">char</code> <code class="c plain">c,t;</code></div><div class="line number5 index4 alt2">&nbsp;</div><div class="line number6 index5 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">p = CriaPilha();</code></div><div class="line number7 index6 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">Empilha(p, </code><code class="c string">'('</code><code class="c plain">);</code></div><div class="line number8 index7 alt1">&nbsp;</div><div class="line number9 index8 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">do</code><code class="c plain">{</code></div><div class="line number10 index9 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">c = expr[i];</code></div><div class="line number11 index10 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">i++;</code></div><div class="line number12 index11 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">if</code><code class="c plain">(c &gt;= </code><code class="c string">'a'</code> <code class="c plain">&amp;&amp; c &lt;= </code><code class="c string">'z'</code><code class="c plain">){</code></div><div class="line number13 index12 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c functions bold">printf</code><code class="c plain">(</code><code class="c string">"%c"</code><code class="c plain">, c);</code></div><div class="line number14 index13 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number15 index14 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">else</code> <code class="c keyword bold">if</code><code class="c plain">(c == </code><code class="c string">'('</code><code class="c plain">){</code></div><div class="line number16 index15 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">Empilha(p, </code><code class="c string">'('</code><code class="c plain">);</code></div><div class="line number17 index16 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number18 index17 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">else</code> <code class="c keyword bold">if</code><code class="c plain">(c == </code><code class="c string">')'</code> <code class="c plain">|| c == </code><code class="c string">'\0'</code><code class="c plain">){</code></div><div class="line number19 index18 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">do</code><code class="c plain">{</code></div><div class="line number20 index19 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">t = Desempilha(p);</code></div><div class="line number21 index20 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">if</code><code class="c plain">(t != </code><code class="c string">'('</code><code class="c plain">)</code></div><div class="line number22 index21 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c functions bold">printf</code><code class="c plain">(</code><code class="c string">"%c"</code><code class="c plain">, t);</code></div><div class="line number23 index22 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}</code><code class="c keyword bold">while</code><code class="c plain">(t != </code><code class="c string">'('</code><code class="c plain">);</code></div><div class="line number24 index23 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number25 index24 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">else</code> <code class="c keyword bold">if</code><code class="c plain">(c == </code><code class="c string">'+'</code> <code class="c plain">|| c == </code><code class="c string">'-'</code> <code class="c plain">|| </code></div><div class="line number26 index25 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">c == </code><code class="c string">'*'</code> <code class="c plain">|| c == </code><code class="c string">'/'</code> <code class="c plain">||</code></div><div class="line number27 index26 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">c == </code><code class="c string">'^'</code> <code class="c plain">){</code></div><div class="line number28 index27 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">while</code><code class="c plain">(1){</code></div><div class="line number29 index28 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">t = Desempilha(p);</code></div><div class="line number30 index29 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">if</code><code class="c plain">(Prioridade(c,t)){</code></div><div class="line number31 index30 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">Empilha(p, t);</code></div><div class="line number32 index31 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">Empilha(p, c);</code></div><div class="line number33 index32 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">break</code><code class="c plain">;</code></div><div class="line number34 index33 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number35 index34 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c keyword bold">else</code><code class="c plain">{</code></div><div class="line number36 index35 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c functions bold">printf</code><code class="c plain">(</code><code class="c string">"%c"</code><code class="c plain">, t);</code></div><div class="line number37 index36 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number38 index37 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number39 index38 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">}</code></div><div class="line number40 index39 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">}</code><code class="c keyword bold">while</code><code class="c plain">(c != </code><code class="c string">'\0'</code><code class="c plain">);</code></div><div class="line number41 index40 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c functions bold">printf</code><code class="c plain">(</code><code class="c string">"\n"</code><code class="c plain">);</code></div><div class="line number42 index41 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">LiberaPilha(p);</code></div><div class="line number43 index42 alt2"><code class="c plain">}</code></div></div></td></tr></tbody></table></div></div>
+
+
+<h3>Função auxiliar:</h3>
+
+A função acima necessita de uma função auxiliar
+para realizar a comparação das prioridades dos operadores.
+A prioridade varia, conforme o símbolo se encontre na entrada 
+ou no topo da pilha, de acordo com a seguinte tabela:
+<p>
+<table border="1" cellpadding="5">
+<tbody><tr><th>Símbolo</th><th>Pilha</th><th>Entrada</th></tr>
+<tr><td>^</td><td>3</td><td>4</td></tr>
+<tr><td>*, /</td><td>2</td><td>2</td></tr>
+<tr><td>+, -</td><td>1</td><td>1</td></tr>
+<tr><td>(</td><td>0</td><td>4</td></tr>
+</tbody></table>
+
+  </p><div><div id="highlighter_284473" class="syntaxhighlighter  c"><div class="toolbar"><span><a href="http://www.vision.ime.usp.br/~pmiranda/mac122_2s14/aulas/aula13/aula13.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div><div class="line number15 index14 alt2">15</div><div class="line number16 index15 alt1">16</div><div class="line number17 index16 alt2">17</div><div class="line number18 index17 alt1">18</div><div class="line number19 index18 alt2">19</div><div class="line number20 index19 alt1">20</div><div class="line number21 index20 alt2">21</div><div class="line number22 index21 alt1">22</div><div class="line number23 index22 alt2">23</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="c color1 bold">int</code> <code class="c plain">Prioridade(</code><code class="c color1 bold">char</code> <code class="c plain">c, </code><code class="c color1 bold">char</code> <code class="c plain">t){</code></div><div class="line number2 index1 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">int</code> <code class="c plain">pc,pt;</code></div><div class="line number3 index2 alt2">&nbsp;</div><div class="line number4 index3 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">if</code><code class="c plain">(c == </code><code class="c string">'^'</code><code class="c plain">)</code></div><div class="line number5 index4 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">pc = 4;</code></div><div class="line number6 index5 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">else</code> <code class="c keyword bold">if</code><code class="c plain">(c == </code><code class="c string">'*'</code> <code class="c plain">|| c == </code><code class="c string">'/'</code><code class="c plain">)</code></div><div class="line number7 index6 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">pc = 2;</code></div><div class="line number8 index7 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">else</code> <code class="c keyword bold">if</code><code class="c plain">(c == </code><code class="c string">'+'</code> <code class="c plain">|| c == </code><code class="c string">'-'</code><code class="c plain">)</code></div><div class="line number9 index8 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">pc = 1;</code></div><div class="line number10 index9 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">else</code> <code class="c keyword bold">if</code><code class="c plain">(c == </code><code class="c string">'('</code><code class="c plain">)</code></div><div class="line number11 index10 alt2"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">pc = 4;</code></div><div class="line number12 index11 alt1">&nbsp;</div><div class="line number13 index12 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">if</code><code class="c plain">(t == </code><code class="c string">'^'</code><code class="c plain">)</code></div><div class="line number14 index13 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">pt = 3;</code></div><div class="line number15 index14 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">else</code> <code class="c keyword bold">if</code><code class="c plain">(t == </code><code class="c string">'*'</code> <code class="c plain">|| t == </code><code class="c string">'/'</code><code class="c plain">)</code></div><div class="line number16 index15 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">pt = 2;</code></div><div class="line number17 index16 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">else</code> <code class="c keyword bold">if</code><code class="c plain">(t == </code><code class="c string">'+'</code> <code class="c plain">|| t == </code><code class="c string">'-'</code><code class="c plain">)</code></div><div class="line number18 index17 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">pt = 1;</code></div><div class="line number19 index18 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">else</code> <code class="c keyword bold">if</code><code class="c plain">(t == </code><code class="c string">'('</code><code class="c plain">)</code></div><div class="line number20 index19 alt1"><code class="c spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="c plain">pt = 0;</code></div><div class="line number21 index20 alt2">&nbsp;</div><div class="line number22 index21 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">return</code> <code class="c plain">(pc &gt; pt);</code></div><div class="line number23 index22 alt2"><code class="c plain">}</code></div></div></td></tr></tbody></table></div></div>
+
+
+<h3>Exemplo de programa principal:</h3>
+
+
+  <div><div id="highlighter_270806" class="syntaxhighlighter  c"><div class="toolbar"><span><a href="http://www.vision.ime.usp.br/~pmiranda/mac122_2s14/aulas/aula13/aula13.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="c color1 bold">int</code> <code class="c plain">main(){</code></div><div class="line number2 index1 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c color1 bold">char</code> <code class="c plain">expr[] = </code><code class="c string">"a*b+c*d^e/f-g*h"</code><code class="c plain">;</code></div><div class="line number3 index2 alt2"><code class="c spaces">&nbsp;</code>&nbsp;</div><div class="line number4 index3 alt1"><code class="c spaces">&nbsp;&nbsp;</code><code class="c plain">In2Pos(expr);</code></div><div class="line number5 index4 alt2"><code class="c spaces">&nbsp;&nbsp;</code><code class="c keyword bold">return</code> <code class="c plain">0;</code></div><div class="line number6 index5 alt1"><code class="c plain">}</code></div></div></td></tr></tbody></table></div></div>
+
+  <br>
+
+  <script src="./aula13_files/shCore.js"></script>
+  <script src="./aula13_files/shBrushCpp.js"></script>
+  <script>
+    SyntaxHighlighter.all()
+  </script>
+
+
+
+</body></html>
